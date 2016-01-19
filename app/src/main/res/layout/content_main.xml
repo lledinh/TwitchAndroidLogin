@@ -1,19 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.ledinh.twitch_login.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
-</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login --- Keep cookies ---"
+            android:id="@+id/buttonLoginKeepCookies"
+            android:layout_centerVertical="true"
+            android:layout_alignRight="@+id/buttonLoginDeleteCookies"
+            android:layout_alignEnd="@+id/buttonLoginDeleteCookies"
+            android:layout_alignLeft="@+id/buttonLoginDeleteCookies"
+            android:layout_alignStart="@+id/buttonLoginDeleteCookies" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/buttonLoginKeepCookies"
+            android:layout_centerHorizontal="true"
+            android:text="Login --- Delete cookies ---"
+            android:id="@+id/buttonLoginDeleteCookies"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/buttonLoginKeepCookies"
+            android:text="Logout"
+            android:id="@+id/buttonLogout"
+            android:layout_alignRight="@+id/buttonLoginKeepCookies"
+            android:layout_alignEnd="@+id/buttonLoginKeepCookies"
+            android:layout_alignLeft="@+id/buttonLoginKeepCookies"
+            android:layout_alignStart="@+id/buttonLoginKeepCookies" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Token: "
+            android:id="@+id/textViewToken"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="--- Token value ---"
+            android:id="@+id/textViewTokenValue"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User information: "
+            android:id="@+id/textViewUserInformation"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="--- User information values ---"
+            android:id="@+id/textViewUserInformationValue" />
+    </LinearLayout>
+</LinearLayout>

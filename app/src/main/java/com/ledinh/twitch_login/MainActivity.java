@@ -1,31 +1,92 @@
 package com.ledinh.twitch_login;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+import com.ledinh.twitch_login.model.UserModel;
+import com.ledinh.twitch_login.rest.RestResponseObjects.TopObjects.UserObject;
+import com.ledinh.twitch_login.rest.Twitch;
+import com.ledinh.twitch_login.storage.SharedPreferencesStorage;
+
+import retrofit.Callback;
+import retrofit.Response;
+
+public class MainActivity extends AppCompatActivity implements TwitchLoginDialogFragment.Callback {
+    private static final String DEBUG_TAG = MainActivity.class.getSimpleName();
+
+    private static final String FRAGMENT_TAG_TWITCH_DIALOG = "twitch_dialog_fragment";
+
+    private Button mLoginButtonKeepCookies;
+    private Button mLoginButtonDeleteCookies;
+    private Button mLogoutButton;
+    private TextView mTextViewTokenValue;
+    private TextView mTextViewUserInformationValue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mLoginButtonKeepCookies = (Button) findViewById(R.id.buttonLoginKeepCookies);
+        mLoginButtonDeleteCookies = (Button) findViewById(R.id.buttonLoginDeleteCookies);
+        mLogoutButton = (Button) findViewById(R.id.buttonLogout);
+        mTextViewTokenValue = (TextView) findViewById(R.id.textViewTokenValue);
+        mTextViewUserInformationValue = (TextView) findViewById(R.id.textViewUserInformationValue);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        // On récupère le token si il existe
+        if(SharedPreferencesStorage.contains(MainActivity.this, SharedPreferencesStorage.SHARED_PREFS_KEY_TOKEN)){
+            String accessToken = SharedPreferencesStorage.retrieve(MainActivity.this, SharedPreferencesStorage.SHARED_PREFS_KEY_TOKEN, String.class);
+            mTextViewTokenValue.setText(accessToken);
+        }
+
+        // On récupère les informations du compte de l'utilisateur si elles existent
+        if(SharedPreferencesStorage.contains(MainActivity.this, SharedPreferencesStorage.SHARED_PREFS_KEY_USER)){
+            UserModel userModel = SharedPreferencesStorage.retrieve(MainActivity.this, SharedPreferencesStorage.SHARED_PREFS_KEY_USER, UserModel.class);
+            mTextViewUserInformationValue.setText(userModel.toString());
+        }
+
+        mLoginButtonKeepCookies.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+                showTwitchLoginDialogFragment(true);
             }
         });
+
+        mLoginButtonDeleteCookies.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTwitchLoginDialogFragment(false);
+            }
+        });
+
+        mLogoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferencesStorage.reset(MainActivity.this, SharedPreferencesStorage.SHARED_PREFS_KEY_TOKEN);
+                SharedPreferencesStorage.reset(MainActivity.this, SharedPreferencesStorage.SHARED_PREFS_KEY_USER);
+                mTextViewTokenValue.setText("--- Token value ---");
+                mTextViewUserInformationValue.setText("--- User information values ---");
+            }
+        });
+    }
+
+    // Affiche la boîte de dialogue pour s'authentifier sur son compte Twitch
+    private void showTwitchLoginDialogFragment(boolean keepCookies){
+        TwitchLoginDialogFragment fragment = TwitchLoginDialogFragment.newInstance(keepCookies);
+        FragmentManager fm = getSupportFragmentManager();
+        fragment.show(fm, FRAGMENT_TAG_TWITCH_DIALOG);
     }
 
     @Override
@@ -49,4 +110,43 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    @Override
+    public void onSuccessTwitchLogin(String accessToken) {
+        Log.d(DEBUG_TAG, "onSuccessTwitchLogin called");
+        Log.d(DEBUG_TAG, "accessToken = " + accessToken);
+        // On stocke le token
+        SharedPreferencesStorage.store(MainActivity.this, SharedPreferencesStorage.SHARED_PREFS_KEY_TOKEN, accessToken);
+
+        // On récupère les informations du compte de l'utilisateur
+        Twitch.api.getUser("OAuth " + accessToken).enqueue(new Callback<UserObject>() {
+            @Override
+            public void onResponse(Response<UserObject> response) {
+                Log.d(DEBUG_TAG, "onResponse = " + response.raw());
+                UserModel userModel = new UserModel(response.body());
+                // On stocke les informations du compte de l'utilisateur
+                SharedPreferencesStorage.store(MainActivity.this, SharedPreferencesStorage.SHARED_PREFS_KEY_USER, userModel);
+                mTextViewUserInformationValue.setText(userModel.toString());
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d(DEBUG_TAG, "getUser failed --- " + t.getMessage());
+            }
+        });
+
+        mTextViewTokenValue.setText(accessToken);
+    }
+
+    @Override
+    public void onDismissTwitchLogin() {
+        Log.d(DEBUG_TAG, "onDismissTwitchLogin called");
+    }
+
+    @Override
+    public void onErrorTwitchLogin(String message) {
+        Log.d(DEBUG_TAG, "onErrorTwitchLogin called");
+    }
+
 }

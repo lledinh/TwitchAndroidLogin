@@ -60,7 +60,7 @@ public class SharedPreferencesStorage {
         String json = gson.toJson(value);
 
         editor.putString(key, json);
-        editor.commit();
+        editor.apply();
     }
 
     /**

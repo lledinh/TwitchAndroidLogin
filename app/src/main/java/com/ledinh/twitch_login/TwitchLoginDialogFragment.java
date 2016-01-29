@@ -1,6 +1,7 @@
 package com.ledinh.twitch_login;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,14 +28,15 @@ public class TwitchLoginDialogFragment extends WebViewDialogFragment {
 
     private static final String ARG_KEEP_COOKIES = "keep_cookies";
 
-    private TwitchLoginDialogFragment.Callback mCallback;
+//    private TwitchLoginDialogFragment.Callback mCallback;
     private boolean mKeepCookies = false;
+    private String mAccessToken;
 
-    public interface Callback {
-        void onSuccessTwitchLogin(String result);
-        void onDismissTwitchLogin();
-        void onErrorTwitchLogin(String message);
-    }
+//    public interface Callback {
+//        void onSuccessTwitchLogin(String result);
+//        void onDismissTwitchLogin();
+//        void onErrorTwitchLogin(String message);
+//    }
 
     public static TwitchLoginDialogFragment newInstance(boolean keepCookies) {
         TwitchLoginDialogFragment fragment = new TwitchLoginDialogFragment();
@@ -59,11 +61,11 @@ public class TwitchLoginDialogFragment extends WebViewDialogFragment {
             mKeepCookies = args.getBoolean(ARG_KEEP_COOKIES);
         }
 
-        try {
-            mCallback = (TwitchLoginDialogFragment.Callback) getActivity();
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Calling activity must implement TwitchLoginDialogFragment");
-        }
+//        try {
+//            mCallback = (TwitchLoginDialogFragment.Callback) getActivity();
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException("Calling activity must implement TwitchLoginDialogFragment");
+//        }
     }
 
     @Override
@@ -72,6 +74,13 @@ public class TwitchLoginDialogFragment extends WebViewDialogFragment {
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         return dialog;
     }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        TwitchIntentService.startActionRetrieveUser(getContext(), mAccessToken);
+        super.onDismiss(dialog);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -131,20 +140,20 @@ public class TwitchLoginDialogFragment extends WebViewDialogFragment {
 
     private void handleLoginSuccess(String returnedUrl){
         try{
-            String accessToken = retrieveAccessToken(returnedUrl);
-            mCallback.onSuccessTwitchLogin(accessToken);
+            mAccessToken = retrieveAccessToken(returnedUrl);
+//            mCallback.onSuccessTwitchLogin(accessToken);
         }
         catch(MalformedURLException e){
             Log.d(DEBUG_TAG, "MalformedURLException thrown, should not happen");
         }
 
-        mCallback.onDismissTwitchLogin();
+//        mCallback.onDismissTwitchLogin();
         // On ferme la boîte de dialogue
         dismiss();
     }
 
     private void handleLoginFail(){
-        mCallback.onErrorTwitchLogin("Login failed.");
+//        mCallback.onErrorTwitchLogin("Login failed.");
         // On ferme la boîte de dialogue
         dismiss();
     }

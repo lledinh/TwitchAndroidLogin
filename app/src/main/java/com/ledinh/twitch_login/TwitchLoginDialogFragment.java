@@ -23,7 +23,7 @@ import java.net.URL;
  * Affiche une boîte de dialogue qui permet à l'utilisateur de se connecter à son compte Twitch.
  * Une fois que l'utilisateur s'est connecté, on récupère un token. Ce token est nécessaire pour faire certain appels à l'api REST Twitch.
  */
-public class TwitchLoginDialogFragment extends WebViewDialogFragment {
+public class TwitchLoginDialogFragment extends WebviewDialogFragment {
     private static final String DEBUG_TAG = TwitchLoginDialogFragment.class.getSimpleName();
 
     private static final String ARG_KEEP_COOKIES = "keep_cookies";

@@ -3,7 +3,8 @@ package com.ledinh.twitch_login.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.ledinh.twitch_login.rest.RestResponseObjects.TopObjects.UserObject;
+import com.ledinh.twitch_login.rest.UserJSON;
+
 /**
  * Created by Lam on 18/01/2016.
  */
@@ -14,12 +15,12 @@ public class UserModel implements Parcelable {
     public String logo;
     public String display_name;
 
-    public UserModel(UserObject userObject) {
-        type = userObject.type;
-        name = userObject.name;
-        created_at = userObject.created_at;
-        logo = userObject.logo;
-        display_name = userObject.display_name;
+    public UserModel(UserJSON userJSON) {
+        type = userJSON.getData().get(0).getType();
+        name = userJSON.getData().get(0).getLogin();
+        created_at = null;
+        logo = userJSON.getData().get(0).getProfileImageUrl();
+        display_name = userJSON.getData().get(0).getDisplayName();
     }
 
     protected UserModel(Parcel in) {

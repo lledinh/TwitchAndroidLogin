@@ -94,6 +94,7 @@ public class TwitchLoginDialogFragment extends WebviewDialogFragment {
         // TODO: removeAllCookie deprecated
         if(!mKeepCookies) cookieManager.removeAllCookie();
 
+        mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.loadUrl(Twitch.LOGIN_URL);
         mWebView.setWebViewClient(new WebViewClient() {
             @Override

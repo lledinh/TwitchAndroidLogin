@@ -7,13 +7,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.ledinh.twitch_login.model.UserModel;
-import com.ledinh.twitch_login.rest.RestResponseObjects.TopObjects.UserObject;
 import com.ledinh.twitch_login.rest.Twitch;
+import com.ledinh.twitch_login.rest.UserJSON;
 import com.ledinh.twitch_login.storage.SharedPreferencesStorage;
-
 import java.io.IOException;
 
-import retrofit.Response;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -60,7 +60,8 @@ public class TwitchIntentService extends IntentService {
         if (ok) {
             try {
                 // On récupère les informations du compte de l'utilisateur
-                Response<UserObject> response = Twitch.api.getUser("OAuth " + accessToken).execute();
+                Response<UserJSON> response = Twitch.api.getUser("Bearer " + accessToken).execute();
+                Log.d(DEBUG_TAG, response.body().toString());
                 UserModel userModel = new UserModel(response.body());
                 // On stocke les informations du compte de l'utilisateur
                 SharedPreferencesStorage.store(this, SharedPreferencesStorage.SHARED_PREFS_KEY_USER, userModel);

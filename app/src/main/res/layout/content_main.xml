@@ -58,26 +58,30 @@
             android:layout_height="wrap_content"
             android:text="Token: "
             android:id="@+id/textViewToken"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:textSize="24sp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="--- Token value ---"
             android:id="@+id/textViewTokenValue"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:textSize="24sp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="User information: "
             android:id="@+id/textViewUserInformation"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:textSize="24sp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="--- User information values ---"
-            android:id="@+id/textViewUserInformationValue" />
+            android:id="@+id/textViewUserInformationValue"
+            android:textSize="24sp" />
     </LinearLayout>
 </LinearLayout>

@@ -18,7 +18,7 @@ public class Twitch {
     public static TwitchRestService api;
 
     private static final String RESPONSE_TYPE = "token";
-    private static final String DEV_ACCESS_TOKEN = "114fefeis8yf6cww3xo0fv2k7hykjtq";
+    private static final String DEV_ACCESS_TOKEN = "ak114fefeis8yf6cww3xo0fv2k7hykjtqal";
     private static final String REDIRECT_URL = "http://localhost";
     private static final String SCOPE = "user_read chat:read chat:edit channel:moderate whispers:read whispers:edit";
 
